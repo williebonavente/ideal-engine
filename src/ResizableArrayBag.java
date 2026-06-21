@@ -1,19 +1,21 @@
 import collection.BagInterface;
 
+import java.util.Arrays;
+
 /**
  * A class of bags whose entries are stored in a fixed-size array.
  *
  */
 
-public class ArrayBag<T> implements BagInterface<T>  {
+public class ResizableArrayBag<T> implements BagInterface<T>  {
 
-    private final T[] bag;
-    private static final int DEFAULT_CAPACITY = 25;
+    private T[] bag;
+    private static final int DEFAULT_CAPACITY = 1000;
     private int numberOfEntries;
 
     // Creates an empty bag whose initial capacity is 25.
     // Default Constructor
-    public ArrayBag() {
+    public ResizableArrayBag() {
         this(DEFAULT_CAPACITY);
     }
 
@@ -22,7 +24,7 @@ public class ArrayBag<T> implements BagInterface<T>  {
      *
      * @param capacity the integer capacity desired.
      */
-    public ArrayBag(int capacity) {
+    public ResizableArrayBag(int capacity) {
         numberOfEntries = 0;
         // the cast is safe because the new array contains null entries
         @SuppressWarnings("unchecked")
@@ -37,16 +39,35 @@ public class ArrayBag<T> implements BagInterface<T>  {
      * @return true if the addition is successful, or false if not
      */
     public boolean add(T newEntry) {
-        if (isFull()) return false;
-        else {
-            bag[numberOfEntries] = newEntry;
-            numberOfEntries++;
-        }
+        ensureCapacity();
+        bag[numberOfEntries] = newEntry;
+        numberOfEntries++;
         return true;
     }
 
     /**
-     *
+     * Doubles the size of hte array bag if it is full.
+     */
+    private void ensureCapacity() {
+        if (numberOfEntries == bag.length) {
+            int newLength = 2 * bag.length;
+            // Safety guard against the 0 initialization
+            if (newLength == 0) newLength = DEFAULT_CAPACITY;
+            bag = Arrays.copyOf(bag, newLength);
+        }
+    }
+
+    /**
+     * Shrink the size of the bag after it hits the threshold of less than 25% of the allocated array.
+     */
+    private void shrinkCapacity() {
+        // safeguard against the smaller initial capacity
+        if (numberOfEntries > 0 && numberOfEntries <= bag.length / 4 && bag.length > DEFAULT_CAPACITY) {
+            int newLength = bag.length / 2;
+            bag = Arrays.copyOf(bag, newLength);
+        }
+    }
+    /**
      * Sees whether this bag is full.
      * @return true if the bag is full, or false if not
     */
@@ -58,9 +79,7 @@ public class ArrayBag<T> implements BagInterface<T>  {
      * Sees whether this bag is empty.
      * @return true if the bag is empty, or false if not
      */
-    public boolean isEmpty() {
-        return numberOfEntries == 0;
-    }
+    public boolean isEmpty() { return numberOfEntries == 0; }
 
     /**
      * Retrieves all entries that are in this bag.
@@ -70,9 +89,7 @@ public class ArrayBag<T> implements BagInterface<T>  {
         // the case is safe because the new array contains null entries
         @SuppressWarnings("unchecked")
         T[] result = (T[]) new Object[numberOfEntries]; // unchecked cast
-        for (int index = 0; index < numberOfEntries; index++) {
-            result[index] = bag[index];
-        }
+        System.arraycopy(bag, 0, result, 0, numberOfEntries);
         return result;
     }
 
@@ -107,6 +124,9 @@ public class ArrayBag<T> implements BagInterface<T>  {
             numberOfEntries--;
             bag[givenIndex] = bag[numberOfEntries]; // replace entry with last entry
             bag[numberOfEntries] = null; // remove last entry
+
+            // Check if we should scale DOWN after a successful deletion
+            shrinkCapacity();
         }
         return result;
     }

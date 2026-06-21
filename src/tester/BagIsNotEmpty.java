@@ -3,7 +3,7 @@ package tester;
 import collection.BagAssertionRule;
 import collection.BagInterface;
 
-public class BagCheckingIsNotEmpty<T> implements BagAssertionRule<T> {
+public class BagIsNotEmpty<T> implements BagAssertionRule<T> {
 
     @Override
     public void verify(BagInterface<T> aBag, boolean expectedNotEmpty) {

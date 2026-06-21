@@ -76,4 +76,9 @@ public interface BagInterface<T>  {
      */
     public T[] toArray();
 
+    /**
+     * Clear all the items in the bag
+     */
+    public void clear();
+
 } // end collection.BagInterface

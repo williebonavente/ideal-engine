@@ -6,7 +6,10 @@ import collection.BagInterface;
 public class BagAddingNewItems<T> implements BagAssertionRule<T> {
     private final T addedEntry;
 
-    // passing the source bag and destination bag through constructor
+    /**
+     *  Passing the added item through constructor in the bag.
+     * @param addedEntry is the added item in the bag.
+     */
     public BagAddingNewItems (T addedEntry) {
         this.addedEntry = addedEntry;
     }
