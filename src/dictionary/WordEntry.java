@@ -20,4 +20,9 @@ public class WordEntry implements Comparable<WordEntry> {
     public int compareTo(WordEntry other) {
         return this.word.compareToIgnoreCase(other.getWord());
     }
+
+    @Override
+    public String toString() {
+        return getWord() + ": " + getDefinition();
+    }
 }
