@@ -29,6 +29,7 @@ public class ArrayDictionaryCRUD implements DictionaryCRUD {
             return false; // Reject the duplication immediately
 
         // Wrap the data into single cohesive object
+        String normalizedWord = word.trim().toLowerCase();
         WordEntry newWord = new WordEntry(word, definition);
         dictionary.add(newWord);
         Collections.sort(dictionary);
